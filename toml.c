@@ -11,6 +11,25 @@
 #include <errno.h>
 #include <string.h>
 
+const char *
+toml_type_string(enum toml_type type)
+{
+	switch(type) {
+		case TOML_ROOT: return "TOML_ROOT"; break;
+		case TOML_TABLE: return "TOML_TABLE"; break;
+		case TOML_LIST: return "TOML_LIST"; break;
+		case TOML_INT: return "TOML_INT"; break;
+		case TOML_FLOAT: return "TOML_FLOAT"; break;
+		case TOML_STRING: return "TOML_STRING"; break;
+		case TOML_DATE: return "TOML_DATE"; break;
+		case TOML_BOOLEAN: return "TOML_BOOLEAN"; break;
+		case TOML_TABLE_ARRAY: return "TOML_TABLE_ARRAY"; break;
+		case TOML_INLINE_TABLE: return "TOML_INLINE_TABLE"; break;
+		case TOML_MAX: return "TOML_MAX"; break;
+		default: return "TOML_INVALID_TYPE"; break;
+	}
+}
+
 int
 toml_init(struct toml_node **toml_root)
 {
@@ -44,7 +63,7 @@ toml_get(struct toml_node *toml_root, char *key)
 		list_for_each(&node->value.map, item, map) {
 			if (!item->node.name)
 				continue;
-							
+
 			if (strcmp(item->node.name, ancestor) == 0) {
 				node = &item->node;
 				found = 1;
@@ -127,7 +146,7 @@ _toml_dump(struct toml_node *toml_node, FILE *output, char *bname, int indent,
 		value = toml_value_as_string(toml_node);
 		fprintf(output, "%s%s%s%s",
 				toml_node->type == TOML_STRING ? "\"" : "",
-				value, 
+				value,
 				toml_node->type == TOML_STRING ? "\"" : "",
 				newline ? "\n" : "");
 		free(value);
@@ -529,4 +548,33 @@ char*
 toml_name(struct toml_node* node)
 {
 	return _json_string_encode(node->name);
+}
+
+enum toml_type
+toml_get_type(struct toml_node* node)
+{
+	return node->type;
+}
+
+const char *
+toml_get_name(struct toml_node* node)
+{
+	// TODO: check for errors
+	return node->name;
+}
+
+int
+toml_get_integer(struct toml_node* node)
+{
+	// TODO: check for errors
+	assert(node->type == TOML_INT);
+	return node->value.integer;
+}
+
+double
+toml_get_floating(struct toml_node* node)
+{
+	// TODO: check for errors
+	assert(node->type == TOML_FLOAT);
+	return node->value.floating.value;
 }

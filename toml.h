@@ -21,6 +21,8 @@ enum toml_type {
 	TOML_MAX
 };
 
+const char* toml_type_string(enum toml_type);
+
 struct toml_node;
 
 typedef void (*toml_node_walker)(struct toml_node*, void*);
@@ -36,6 +38,12 @@ void toml_dive(struct toml_node*, toml_node_walker, void*);
 enum toml_type toml_type(struct toml_node*);
 char* toml_name(struct toml_node*);				/* caller should free return value */
 char* toml_value_as_string(struct toml_node*);	/* caller should free return value */
+
+enum toml_type toml_get_type(struct toml_node*);
+const char * toml_get_name(struct toml_node*);
+int toml_get_integer(struct toml_node*);
+double toml_get_floating(struct toml_node*);
+//double toml_get_number(struct toml_node*); // converts ints to doubles as well
 
 #ifdef __cplusplus
 }; // extern "C"
