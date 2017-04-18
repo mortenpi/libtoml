@@ -29,6 +29,7 @@ typedef void (*toml_node_walker)(struct toml_node*, void*);
 
 int toml_init(struct toml_node**);
 int toml_parse(struct toml_node*, char*, int);
+int toml_parse_file(struct toml_node*, char*);
 struct toml_node* toml_get(struct toml_node*, char*);
 void toml_dump(struct toml_node*, FILE*);
 void toml_tojson(struct toml_node*, FILE*);

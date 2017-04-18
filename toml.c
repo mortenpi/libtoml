@@ -578,3 +578,28 @@ toml_get_floating(struct toml_node* node)
 	assert(node->type == TOML_FLOAT);
 	return node->value.floating.value;
 }
+
+int
+toml_parse_file(struct toml_node* node, char* filename)
+{
+	long file_size;
+	char * toml_buffer;
+
+	FILE * fh = fopen(filename, "rb");
+	if(!fh) {
+		perror("File opening failed");
+		return -1;
+	}
+
+	fseek(fh, 0L, SEEK_END);
+	file_size = ftell(fh);
+	rewind(fh);
+
+	toml_buffer = malloc(file_size * sizeof(char) + 1);
+	fread(toml_buffer, file_size, 1, fh);
+	toml_buffer[file_size+1] = '\0';
+
+	fclose(fh);
+
+	return toml_parse(node, toml_buffer, file_size);
+}
